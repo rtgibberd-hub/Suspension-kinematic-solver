@@ -1,6 +1,7 @@
 # Suspension Kinematic Solver
 
-This tool models front wishbone suspension geometry with dynamic updates based on damper length changes across roll, pitch, and heave. Built for simulation clarity and modular refinement.
+This tool models front wishbone suspension geometry with dynamic updates based on damper length changes across roll, pitch, and heave. These visualised changes in wheel camber can be used to determine changes in race and driver strategy. Built for simulation clarity and modular refinement.
+Created with hardpoint data used from Team Bath Racing Electric. 
 
 Key words: Vehicle kinematics, dynamic simulation, 3D modelling
 
