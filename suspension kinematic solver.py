@@ -66,13 +66,7 @@ wheel_top  = geometry ["wheel"]["top"]
 wheel_bottom = geometry ["wheel"]["bottom"]
 wheel_center = geometry["wheel"]["center"]
 
-#cpfi = geometry ["contact_patch"]["front_inboard"]
-#cpfo = geometry ["contact_patch"]["front_outbaord"]
-#cpbi = geometry["contact_patch"]["back_inbaord"]
-#cpbo = geometry["contact_patch"][ "back_outbaord"]
-
 damp_lwb_mt = geometry["damper"]["wishbone_mount"]
-#pretend mount for now
 damp_chassis_mt = geometry["damper"]["chassis_mount"]
 damper_mount = geometry["rocker"]["pushrod_mount"]
 P1 = geometry["lower_wishbone"]["pivot_1"]
@@ -100,25 +94,11 @@ outboard_damp_mt = np.array(damp_lwb_mt) - np.array(P1)
 axle_v = np.array(axle_wheel) - np.array(axle_knuckle)
 len_axle_uwb = np.array(uwb_outboard_coord) - np.array(axle_knuckle)
 wheel_v = np.array(wheel_top) - np.array(wheel_bottom)
-#contact_patch = np.array([cpfi, cpfo, cpbi, cpbo])
 
 
 
 # --- Main simulation ---
 def main():
-    # Original damper
-    # ax.plot([damp_chassis_mt[0], lwb_outboard_coord[0]],
-    #         [damp_chassis_mt[1], lwb_outboard_coord[1]],
-    #         [damp_chassis_mt[2], lwb_outboard_coord[2]],
-    #         color='green', label='Original Damper')
-
-    # # Changed damper
-    # ax.plot([damp_chassis_mt[0], new_lwb_outboard[0]],
-    #         [damp_chassis_mt[1], new_lwb_outboard[1]],
-    #         [damp_chassis_mt[2], new_lwb_outboard[2]],
-    #         color='red', linestyle='--', label='Changed Damper')
-
-
 
     # --- Lengths ---
     global damper_length
@@ -129,31 +109,18 @@ def main():
     ax = fig.add_subplot(111, projection='3d')
 
     print (f"original damper length is: {damper_length}")
-    
-    #print (f"knuckle length is: {knuckle_length}")
 
     changed_damper_length = input("What is the length of the damper you want to simulate?\n")
     clean_input_damp_len = float(changed_damper_length.strip())
-    #print (f"original coords of lwb end are:{lwb_outboard_coord}")
-    #print (f"original coords of uwb end are:{uwb_outboard_coord}")
-#####
+
     new_lwb_outboard = move_damp_mt(clean_input_damp_len, lwb_outboard_coord, P1, P2)
 
-    #print (f"new coords of lwb end are:{new_lwb_outboard}")
-#####
     new_uwb_outboard = move_damp_mt(clean_input_damp_len, uwb_outboard_coord, P3, P4)
-
-    #print (f"new coords of uwb end are:{new_uwb_outboard}")
-
-    #print(f"original damper mount coords are: {damp_lwb_mt}")
 
 
     new_damper_mount = move_damp_mt(clean_input_damp_len, damp_lwb_mt, P1, P2)
-    #print (f"new damper mount coords are: {new_damper_mount}")
 
     angle_change_damper = angle_finder(np.array(damp_lwb_mt) - np.array(P1), np.array(new_damper_mount) - np.array(P1))
-    #new_lwb_outboard = rodriguez_rotation(lw_wishbone_v, lwb_rot_axis, angle_change_damper)
-    #new_uwb_outboard = rodriguez_rotation(uw_wishbone_v, uwb_rot_axis, angle_change_damper)
 
     upd_knuckle_v = np.array(new_uwb_outboard) - np.array(new_lwb_outboard)
     delta_kingpin_angle = angle_finder(upd_knuckle_v, knuckle_v)
@@ -162,16 +129,9 @@ def main():
     knuckle_bottom_to_axle = length_calc(lwb_knuckle, axle_knuckle)
     dir_upd_knuckle_v = upd_knuckle_v / np.linalg.norm(upd_knuckle_v)
     new_knuckle_axle = new_lwb_outboard + dir_upd_knuckle_v * knuckle_bottom_to_axle
-    #print (f"distance from knuckle bottom to axle at knuckle is: {knuckle_bottom_to_axle}")
 
 
     axle_change_v = new_knuckle_axle - np.array(axle_knuckle)
-    #print (f"change in axle at knuckle position is: {axle_change_v}")
-
-    #upd_axle_wheel = np.array(axle_wheel) + axle_change_v
-
-    #upd_wheel_centre = wheel_center + axle_change_v
-
     knuckle_dir_old = np.array(uwb_knuckle) - np.array(lwb_knuckle)
     knuckle_dir_new = np.array(new_uwb_outboard) - np.array(new_lwb_outboard)
     rotation_axis = np.cross(knuckle_dir_old, knuckle_dir_new)    
@@ -195,21 +155,6 @@ def main():
 
     upd_wheel_top = upd_axle_wheel + rotated_top_local
     upd_wheel_bottom = upd_axle_wheel + rotated_bottom_local
-    #print (f"original wheel top is: {wheel_top}")
-    #print (f"updated wheel top is: {upd_wheel_top}")
-    #print (f"original wheel bottom is: {wheel_bottom}")
-    #print (f"updated wheel bottom is: {upd_wheel_bottom}")
-    #print (f"original wheel center is: {wheel_center}")
-    #print (f"original axle at wheel is: {axle_wheel}")
-
-    #print (f"updated wheel center is: {upd_wheel_centre}")
-    #print (f"updated axle at wheel is: {upd_axle_wheel}")
-#    plot_cylinder_along_vector(ax, axle_wheel, wheel_center, wheel_radius)
-
-   # print (f"angle between knuckle and axle originally is : {angle_finder(knuckle_v, axle_v)*(180/np.pi)} degrees")
-
-    #print (f"angle between knuckle and axle after is : {angle_finder(upd_knuckle_v, upd_axle_v)*(180/np.pi)} degrees")
-
     plot_points_and_dampers(new_lwb_outboard, ax)
     plot_initial_vectors(ax)
     plot_final_vectors(ax, new_lwb_outboard, new_uwb_outboard, new_damper_mount, new_knuckle_axle, upd_axle_wheel, upd_wheel_centre)
@@ -517,7 +462,6 @@ def animate_suspension():
         ax2d.set_ylim(-2, 8)      # Example range for camber angle
 
     ani = animation.FuncAnimation(fig, update, frames=len(damper_range), interval=100)
-    #ani.save(r"C:\Users\rtgib\OneDrive - University of Bath\TBRE\vehicle dynamics script\results\suspension_animation.mp4", writer='ffmpeg', fps=20)
     plt.show()
     plt.close(fig)
 
@@ -532,5 +476,6 @@ plt.show()
 
 main()
 animate_suspension()
+
 
  
