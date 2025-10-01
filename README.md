@@ -2,6 +2,8 @@
 
 This tool models front wishbone suspension geometry with dynamic updates based on damper length changes across roll, pitch, and heave. Built for simulation clarity and modular refinement.
 
+Key words: Vehicle kinematics, dynamic simulation, 3D modelling
+
 ## Features
 - Dynamic geometry updates based on damper input
 - Modular structure for easy extension
